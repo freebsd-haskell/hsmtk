@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PORTSDIR=/usr/ports
+: ${PORTSDIR:=/usr/ports}
 
 merge_loop() {
 	SUBJECT=$1
