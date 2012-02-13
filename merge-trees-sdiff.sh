@@ -9,7 +9,13 @@ merge_loop() {
 		cp -p "${SUBJECT}" "${SUBJECT}.merged"
 		sdiff -o "${SUBJECT}.merged" --text --suppress-common-lines \
 		    --width=${SCREEN_WIDTH:-80} "${PORTSDIR}/${SUBJECT}" "${SUBJECT}"
-		INSTALL_MERGED=V
+		SDIFF=$?
+		if [ "${SDIFF}" = "0" ]; then
+			unset MERGE_AGAIN
+			rm "${SUBJECT}.merged"
+		else
+			INSTALL_MERGED=V
+		fi
 		while [ "${INSTALL_MERGED}" = "v" -o "${INSTALL_MERGED}" = "V" ]; do
 			echo ''
 			echo "  Use 'i' to accept the merged file"
