@@ -1,10 +1,14 @@
 
 import Prelude as P
 import Data.List
+import Data.Maybe
+import System.Directory
+import System.Environment
 import System.FilePath.Posix
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
+portsDir  = "/usr/ports"
 hackageMk = "lang/ghc/bsd.hackage.mk"
 
 hsPorts portsdir = do
@@ -17,3 +21,21 @@ hsPorts portsdir = do
 
 printHsPorts portsdir =
   hsPorts portsdir >>= putStrLn . unlines . sort
+
+getPortsDir = do
+  env <- getEnvironment
+  return $ maybe portsDir id (lookup "PORTSDIR" env)
+
+bailOut s = putStrLn $ "ERROR: " ++ s
+
+-- A main function for running from a shell.
+main = do
+  args <- getArgs
+  case args of
+    ["ports"] -> do
+      pdir <- getPortsDir
+      mkThere <- doesFileExist (pdir </> hackageMk)
+      if mkThere
+        then printHsPorts pdir
+        else bailOut "No bsd.hackage.mk found."
+    _ -> bailOut "Nissing or invalid query."
