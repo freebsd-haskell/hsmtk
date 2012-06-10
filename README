@@ -17,3 +17,6 @@ hs-depcalc.hs        -- Dependency and topology calculation (forward,
 
 merge-trees-sdiff.sh -- Help to integrate the cloned freebsd-haskell
                         repository with the FreeBSD Ports Collection.
+
+hs-ports.hs          -- Miscellaneous utilities to get information about
+                        hs- ports.
