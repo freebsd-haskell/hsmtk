@@ -38,4 +38,4 @@ main = do
       if mkThere
         then printHsPorts pdir
         else bailOut "No bsd.hackage.mk found."
-    _ -> bailOut "Nissing or invalid query."
+    _ -> bailOut "Missing or invalid query."
