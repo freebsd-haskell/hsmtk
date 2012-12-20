@@ -20,21 +20,27 @@ getList = liftM (sort . map (DT.splitOn " ") . DT.lines) . DTI.readFile
 printChanges x y = do
   orig <- getList x
   new <- getList y
-  let (deleted,added,modified) = findChanges orig new
+  let (deleted,added,changed) = findChanges orig new
   printf "New ports (%d):\n\n" (length added)
   forM added $ \[p,v] -> do
     let [p',v'] = map DT.unpack [p,v]
-    printf "%-40s %-16s\n" p' v'
+    printf "%-40s %s\n" p' v'
   printf "\n\n"
-  printf "Updated ports (%d):\n\n" (length modified)
-  forM modified $ \(p,v1,v2) -> do
+  let (bumped,updated) = partition isBumped changed
+  printf "Bumped ports (%d):\n\n" (length bumped)
+  forM bumped $ \(p,v1,v2) -> do
     let [p',v1',v2'] = map DT.unpack [p,v1,v2]
-    printf "%-40s %-16s --> %-16s\n" p' v1' v2'
+    printf "%-40s %-16s --> %s\n" p' v1' v2'
+  printf "\n\n"
+  printf "Updated ports (%d):\n\n" (length updated)
+  forM updated $ \(p,v1,v2) -> do
+    let [p',v1',v2'] = map DT.unpack [p,v1,v2]
+    printf "%-40s %-16s --> %s\n" p' v1' v2'
   printf "\n\n"
   printf "Removed ports (%d):\n\n" (length deleted)
   forM deleted $ \[p,v] -> do
     let [p',v'] = map DT.unpack [p,v]
-    printf "%-40s %-16s\n" p' v'
+    printf "%-40s %s\n" p' v'
   return ()
 
 findChanges l1@((x@[nx,vx]):xs) l2@((y@[ny,vy]):ys)
@@ -44,3 +50,9 @@ findChanges l1@((x@[nx,vx]):xs) l2@((y@[ny,vy]):ys)
 
 findChanges [] ys = (mempty,ys,mempty)
 findChanges xs [] = (xs,mempty,mempty)
+
+isBumped (_,v1,v2) =
+  case (map (DT.splitOn "_") [v1,v2]) of
+    [[ver1],[ver2,_]]     -> ver1 == ver2
+    [[ver1,r1],[ver2,r2]] -> ver1 == ver2 && r1 /= r2
+    _ -> False
