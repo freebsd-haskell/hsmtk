@@ -21,27 +21,32 @@ printChanges x y = do
   orig <- getList x
   new <- getList y
   let (deleted,added,changed) = findChanges orig new
-  printf "New ports (%d):\n\n" (length added)
-  forM added $ \[p,v] -> do
-    let [p',v'] = map DT.unpack [p,v]
-    printf "%-40s %s\n" p' v'
-  printf "\n\n"
+  let [numDeleted,numAdded] = fmap length [deleted,added]
+  when (numAdded > 0) (do
+    printf "New ports (%d):\n\n" numAdded
+    forM_ added $ \[p,v] -> do
+      let [p',v'] = map DT.unpack [p,v]
+      printf "%-40s %s\n" p' v')
   let (bumped,updated) = partition isBumped changed
-  printf "Bumped ports (%d):\n\n" (length bumped)
-  forM bumped $ \(p,v1,v2) -> do
-    let [p',v1',v2'] = map DT.unpack [p,v1,v2]
-    printf "%-40s %-16s --> %s\n" p' v1' v2'
-  printf "\n\n"
-  printf "Updated ports (%d):\n\n" (length updated)
-  forM updated $ \(p,v1,v2) -> do
-    let [p',v1',v2'] = map DT.unpack [p,v1,v2]
-    printf "%-40s %-16s --> %s\n" p' v1' v2'
-  printf "\n\n"
-  printf "Removed ports (%d):\n\n" (length deleted)
-  forM deleted $ \[p,v] -> do
-    let [p',v'] = map DT.unpack [p,v]
-    printf "%-40s %s\n" p' v'
-  return ()
+  let [numBumped,numUpdated] = fmap length [bumped,updated]
+  when (numBumped > 0) (do
+    printf "\n\n"
+    printf "Bumped ports (%d):\n\n" numBumped
+    forM_ bumped $ \(p,v1,v2) -> do
+      let [p',v1',v2'] = map DT.unpack [p,v1,v2]
+      printf "%-40s %-16s --> %s\n" p' v1' v2')
+  when (numUpdated > 0) (do
+    printf "\n\n"
+    printf "Updated ports (%d):\n\n" numUpdated
+    forM_ updated $ \(p,v1,v2) -> do
+      let [p',v1',v2'] = map DT.unpack [p,v1,v2]
+      printf "%-40s %-16s --> %s\n" p' v1' v2')
+  when (numDeleted > 0) (do
+    printf "\n\n"
+    printf "Removed ports (%d):\n\n" numDeleted
+    forM_ deleted $ \[p,v] -> do
+      let [p',v'] = map DT.unpack [p,v]
+      printf "%-40s %s\n" p' v')
 
 findChanges l1@((x@[nx,vx]):xs) l2@((y@[ny,vy]):ys)
   | nx == ny  = (mempty,mempty,[(nx,vx,vy)]) `mappend` findChanges xs ys
