@@ -20,14 +20,15 @@ getList = liftM (sort . map (DT.splitOn " ") . DT.lines) . DTI.readFile
 printChanges x y = do
   orig <- getList x
   new <- getList y
-  let (deleted,added,changed) = findChanges orig new
+  let (deleted,added,misc) = findChanges orig new
   let [numDeleted,numAdded] = fmap length [deleted,added]
   when (numAdded > 0) (do
     printf "New ports (%d):\n\n" numAdded
     forM_ added $ \[p,v] -> do
       let [p',v'] = map DT.unpack [p,v]
       printf "%-40s %s\n" p' v')
-  let (bumped,updated) = partition isBumped changed
+  let (bumped,misc') = partition isBumped misc
+  let (updated,_) = partition isUpdated misc'
   let [numBumped,numUpdated] = fmap length [bumped,updated]
   when (numBumped > 0) (do
     printf "\n\n"
@@ -61,3 +62,5 @@ isBumped (_,v1,v2) =
     [[ver1],[ver2,_]]     -> ver1 == ver2
     [[ver1,r1],[ver2,r2]] -> ver1 == ver2 && r1 /= r2
     _ -> False
+
+isUpdated (_,v1,v2) = v1 /= v2
