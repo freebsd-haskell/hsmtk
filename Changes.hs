@@ -46,7 +46,7 @@ resolve :: [DT.Text] -> DT.Text -> DT.Text
 resolve xs p =
   case (find (s `DT.isInfixOf`) xs) of
     Just y -> y
-    _      -> error "This should not happen."
+    _      -> error (printf "This should not happen: %s" (show s))
   where s = "/hs-" `DT.append` p
 
 computeChanges deps x y = do
