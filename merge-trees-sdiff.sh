@@ -7,12 +7,13 @@ merge_loop() {
 	MERGE_AGAIN=yes
 	while [ "${MERGE_AGAIN}" = "yes" ]; do
 		cp -p "${SUBJECT}" "${SUBJECT}.merged"
+		cat "${PORTSDIR}/${SUBJECT}" | sed -e 's/$FreeBSD:.*$/$FreeBSD$/g' > "${SUBJECT}.theirs"
 		sdiff -o "${SUBJECT}.merged" --text --suppress-common-lines \
-		    --width=${SCREEN_WIDTH:-80} "${PORTSDIR}/${SUBJECT}" "${SUBJECT}"
+		    --width=${SCREEN_WIDTH:-80} "${SUBJECT}.theirs" "${SUBJECT}"
 		SDIFF=$?
 		if [ "${SDIFF}" = "0" ]; then
 			unset MERGE_AGAIN
-			rm "${SUBJECT}.merged"
+			rm -f "${SUBJECT}.merged" "${SUBJECT}.theirs"
 		else
 			INSTALL_MERGED=V
 		fi
@@ -30,16 +31,17 @@ merge_loop() {
 			case "${INSTALL_MERGED}" in
 			[iI])
 				mv "${SUBJECT}.merged" "${SUBJECT}"
+				rm -rf "${SUBJECT}.theirs"
 				unset MERGE_AGAIN
 				;;
 			[rR])
-				rm "${SUBJECT}.merged"
+				rm -f "${SUBJECT}.merged" "${SUBJECT}.theirs"
 				;;
 			[vV])
 				${PAGER} "${SUBJECT}.merged"
 				;;
 			[qQ])
-				rm "${SUBJECT}.merged"
+				rm -f "${SUBJECT}.merged" "${SUBJECT}.theirs"
 				QUIT_MERGING=yes
 				unset MERGE_AGAIN
 				;;
