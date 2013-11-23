@@ -28,3 +28,6 @@ pkgversions.sh       -- Get package versions for all Haskell ports in the
 
 Changes.hs           -- Generate list of changes on each Subversion
                         integration.
+
+get_hackage_log.sh   -- Download and convert index.tar.gz of Hackage to a
+                        simplified file for hsupdater to consume.
