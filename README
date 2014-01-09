@@ -31,3 +31,6 @@ Changes.hs           -- Generate list of changes on each Subversion
 
 get_hackage_log.sh   -- Download and convert index.tar.gz of Hackage to a
                         simplified file for hsupdater to consume.
+
+checkout-hs-ports.sh -- Check out lang/ghc and all of the Haskell Cabal ports
+                        from the FreeBSD Subversion repository
