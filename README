@@ -34,3 +34,5 @@ get_hackage_log.sh   -- Download and convert index.tar.gz of Hackage to a
 
 checkout-hs-ports.sh -- Check out lang/ghc and all of the Haskell Cabal ports
                         from the FreeBSD Subversion repository
+
+MassChange.hs        -- Change masses of ports using Haskell functions
