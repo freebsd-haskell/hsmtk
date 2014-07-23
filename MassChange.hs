@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+module MassChange where
 
 import Control.Applicative
 import Control.Monad
