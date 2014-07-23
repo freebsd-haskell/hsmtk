@@ -43,7 +43,10 @@ changeMakefile f path = do
   let makefile = path </> "Makefile"
   exist <- doesFileExist makefile
   if exist
-    then DTI.readFile makefile >>= DTI.writeFile makefile . f
+    then do
+      contents <- DTI.readFile makefile
+      forM_ [(makefile <.> "orig", contents), (makefile, f contents)]
+        (uncurry DTI.writeFile)
     else hPutStrLn stderr $ printf "Warning: %s cannot be found." makefile
 
 on :: (DT.Text -> DT.Text) -> [FilePath] -> IO ()
