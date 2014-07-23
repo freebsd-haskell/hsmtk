@@ -21,10 +21,8 @@ merge-trees-sdiff.sh -- Help to integrate the cloned freebsd-haskell
 hs-ports.hs          -- Miscellaneous utilities to get information about
                         hs- ports.
 
-portversions.sh      -- Get port versions for all Haskell ports in the tree.
-
-pkgversions.sh       -- Get package versions for all Haskell ports in the
-                        tree.
+query.sh             -- Get values of make(1) variable for all Haskell ports
+                        in the tree; that is typically PKGVERSION.
 
 Changes.hs           -- Generate list of changes on each Subversion
                         integration.
